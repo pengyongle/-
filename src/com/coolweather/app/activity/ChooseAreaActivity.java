@@ -14,6 +14,8 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -36,11 +38,11 @@ public class ChooseAreaActivity extends Activity {
 	public static final int LEVEL_PROVINCE = 0;
 	public static final int LEVEL_CITY = 1;
 	public static final int LEVEL_COUNTY = 2;
-	
+
 	private ProgressDialog progressDialog;
 	private TextView titleText;
 	private ListView listView;
-	//private SimpleAdapter adapter;
+	// private SimpleAdapter adapter;
 	private ArrayAdapter<String> adapter;
 	private CoolWeatherDB coolWeatherDB;
 	private List<String> dataList = new ArrayList<String>();
@@ -76,9 +78,12 @@ public class ChooseAreaActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		AdManager.getInstance(this).init("cf9c2a749cd97145","289874826c698edd", false);
-		isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		AdManager.getInstance(this).init("cf9c2a749cd97145",
+				"289874826c698edd", false);
+		isFromWeatherActivity = getIntent().getBooleanExtra(
+				"from_weather_activity", false);
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
 		if (prefs.getBoolean("city_selected", false) && !isFromWeatherActivity) {
 			Intent intent = new Intent(this, WeatherActivity.class);
 			startActivity(intent);
@@ -89,10 +94,17 @@ public class ChooseAreaActivity extends Activity {
 		setContentView(R.layout.choose_area);
 		listView = (ListView) findViewById(R.id.list_view);
 		titleText = (TextView) findViewById(R.id.title_text);
-		//adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataList);
+		// adapter = new ArrayAdapter<String>(this,
+		// android.R.layout.simple_list_item_1, dataList);
 		adapter = new ArrayAdapter<String>(this, R.layout.item2, dataList);
-		//adapter=new SimpleAdapter(ChooseAreaActivity.this, dataList, R.layout.item, null, R.id.text);
+		// adapter=new SimpleAdapter(ChooseAreaActivity.this, dataList,
+		// R.layout.item, null, R.id.text);
 		listView.setAdapter(adapter);
+		LayoutAnimationController lac = new LayoutAnimationController(
+				AnimationUtils.loadAnimation(this, R.anim.anim_zoom_in));
+		lac.setOrder(LayoutAnimationController.ORDER_NORMAL);
+		listView.setLayoutAnimation(lac);
+		listView.startLayoutAnimation();
 		coolWeatherDB = CoolWeatherDB.getInstance(this);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -106,14 +118,15 @@ public class ChooseAreaActivity extends Activity {
 					queryCounties();
 				} else if (currentLevel == LEVEL_COUNTY) {
 					String countyCode = countyList.get(index).getCountyCode();
-					Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+					Intent intent = new Intent(ChooseAreaActivity.this,
+							WeatherActivity.class);
 					intent.putExtra("county_code", countyCode);
 					startActivity(intent);
 					finish();
 				}
 			}
 		});
-		queryProvinces();  // 加载省级数据
+		queryProvinces(); // 加载省级数据
 	}
 
 	/**
@@ -155,7 +168,7 @@ public class ChooseAreaActivity extends Activity {
 			queryFromServer(selectedProvince.getProvinceCode(), "city");
 		}
 	}
-	
+
 	/**
 	 * 查询选中市内所有的县，优先从数据库查询，如果没有查询到再去服务器上查询。
 	 */
@@ -175,14 +188,15 @@ public class ChooseAreaActivity extends Activity {
 			queryFromServer(selectedCity.getCityCode(), "county");
 		}
 	}
-	
+
 	/**
 	 * 根据传入的代号和类型从服务器上查询省市县数据。
 	 */
 	private void queryFromServer(final String code, final String type) {
 		String address;
 		if (!TextUtils.isEmpty(code)) {
-			address = "http://www.weather.com.cn/data/list3/city" + code + ".xml";
+			address = "http://www.weather.com.cn/data/list3/city" + code
+					+ ".xml";
 		} else {
 			address = "http://www.weather.com.cn/data/list3/city.xml";
 		}
@@ -226,14 +240,14 @@ public class ChooseAreaActivity extends Activity {
 					@Override
 					public void run() {
 						closeProgressDialog();
-						Toast.makeText(ChooseAreaActivity.this,
-										"加载失败", Toast.LENGTH_SHORT).show();
+						Toast.makeText(ChooseAreaActivity.this, "加载失败",
+								Toast.LENGTH_SHORT).show();
 					}
 				});
 			}
 		});
 	}
-	
+
 	/**
 	 * 显示进度对话框
 	 */
@@ -245,7 +259,7 @@ public class ChooseAreaActivity extends Activity {
 		}
 		progressDialog.show();
 	}
-	
+
 	/**
 	 * 关闭进度对话框
 	 */
@@ -254,7 +268,7 @@ public class ChooseAreaActivity extends Activity {
 			progressDialog.dismiss();
 		}
 	}
-	
+
 	/**
 	 * 捕获Back按键，根据当前的级别来判断，此时应该返回市列表、省列表、还是直接退出。
 	 */

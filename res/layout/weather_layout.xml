@@ -56,58 +56,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:layout_marginBottom="90dp"
             android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/current_date"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="50dp"
                 android:gravity="center"
-                android:textColor="#FFFF00"
-                android:textSize="18sp" />
+                android:textColor="#FFF"
+                android:textSize="30sp" />
 
             <TextView
                 android:id="@+id/weather_desp"
                 android:layout_width="wrap_content"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="50dp"
                 android:gravity="center"
                 android:textColor="#FFF"
                 android:textSize="40sp" />
 
-            <LinearLayout
+            <Button
+                android:id="@+id/moreReport"
                 android:layout_width="wrap_content"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:id="@+id/temp1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="#FFF"
-                    android:textSize="40sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:text="~"
-                    android:textColor="#00008B"
-                    android:textSize="40sp" />
-
-                <TextView
-                    android:id="@+id/temp2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="#FFF"
-                    android:textSize="40sp" />
-            </LinearLayout>
+                android:text="@string/more_report" />
         </LinearLayout>
 
         <LinearLayout

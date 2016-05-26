@@ -12,6 +12,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,7 +25,7 @@ import com.coolweather.app.util.HttpCallbackListener;
 import com.coolweather.app.util.HttpUtil;
 import com.coolweather.app.util.Utility;
 
-public class WeatherActivity extends Activity implements OnClickListener{
+public class WeatherActivity extends Activity implements OnClickListener {
 
 	private LinearLayout weatherInfoLayout;
 	/**
@@ -37,14 +40,7 @@ public class WeatherActivity extends Activity implements OnClickListener{
 	 * 用于显示天气描述信息
 	 */
 	private TextView weatherDespText;
-	/**
-	 * 用于显示气温1
-	 */
-	private TextView temp1Text;
-	/**
-	 * 用于显示气温2
-	 */
-	private TextView temp2Text;
+
 	/**
 	 * 用于显示当前日期
 	 */
@@ -57,23 +53,33 @@ public class WeatherActivity extends Activity implements OnClickListener{
 	 * 更新天气按钮
 	 */
 	private Button refreshWeather;
-	
+
+	// 更多天气预报按钮
+	private Button moreReport;
+
+	String countyCode;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.weather_layout);
+
 		// 初始化各控件
+		moreReport = (Button) findViewById(R.id.moreReport);
 		weatherInfoLayout = (LinearLayout) findViewById(R.id.weather_info_layout);
 		cityNameText = (TextView) findViewById(R.id.city_name);
 		publishText = (TextView) findViewById(R.id.publish_text);
 		weatherDespText = (TextView) findViewById(R.id.weather_desp);
-		temp1Text = (TextView) findViewById(R.id.temp1);
-		temp2Text = (TextView) findViewById(R.id.temp2);
 		currentDateText = (TextView) findViewById(R.id.current_date);
 		switchCity = (Button) findViewById(R.id.switch_city);
 		refreshWeather = (Button) findViewById(R.id.refresh_weather);
-		String countyCode = getIntent().getStringExtra("county_code");
+		countyCode = getIntent().getStringExtra("county_code");
+		LayoutAnimationController lac = new LayoutAnimationController(
+				AnimationUtils.loadAnimation(this, R.anim.anim_zoom_in));
+		lac.setInterpolator(new LinearInterpolator());
+		lac.setOrder(LayoutAnimationController.ORDER_NORMAL);
+		weatherInfoLayout.setLayoutAnimation(lac);
 		if (!TextUtils.isEmpty(countyCode)) {
 			// 有县级代号时就去查询天气
 			publishText.setText("同步中...");
@@ -86,14 +92,15 @@ public class WeatherActivity extends Activity implements OnClickListener{
 		}
 		switchCity.setOnClickListener(this);
 		refreshWeather.setOnClickListener(this);
-		//实例化广告条
-	    AdView adView = new AdView(this, AdSize.FIT_SCREEN);
-	    //获取要嵌入广告条的布局
-	    LinearLayout adLayout=(LinearLayout)findViewById(R.id.adLayout);
-	    //将广告条加入到布局中
-	    adLayout.addView(adView);
+		moreReport.setOnClickListener(this);
+		// 实例化广告条
+		AdView adView = new AdView(this, AdSize.FIT_SCREEN);
+		// 获取要嵌入广告条的布局
+		LinearLayout adLayout = (LinearLayout) findViewById(R.id.adLayout);
+		// 将广告条加入到布局中
+		adLayout.addView(adView);
 	}
-	
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -105,22 +112,30 @@ public class WeatherActivity extends Activity implements OnClickListener{
 			break;
 		case R.id.refresh_weather:
 			publishText.setText("同步中...");
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(this);
 			String weatherCode = prefs.getString("weather_code", "");
 			if (!TextUtils.isEmpty(weatherCode)) {
 				queryWeatherInfo(weatherCode);
 			}
 			break;
+		case R.id.moreReport:
+			Intent intent1 = new Intent(this, MoreReportActivity.class);
+			intent1.putExtra("countyCode", countyCode);
+			startActivity(intent1);
+			finish();
+			break;
 		default:
 			break;
 		}
 	}
-	
+
 	/**
 	 * 查询县级代号所对应的天气代号。
 	 */
 	private void queryWeatherCode(String countyCode) {
-		String address = "http://www.weather.com.cn/data/list3/city" + countyCode + ".xml";
+		String address = "http://www.weather.com.cn/data/list3/city"
+				+ countyCode + ".xml";
 		queryFromServer(address, "countyCode");
 	}
 
@@ -128,10 +143,11 @@ public class WeatherActivity extends Activity implements OnClickListener{
 	 * 查询天气代号所对应的天气。
 	 */
 	private void queryWeatherInfo(String weatherCode) {
-		String address = "http://www.weather.com.cn/data/cityinfo/" + weatherCode + ".html";
+		String address = "http://www.weather.com.cn/data/cityinfo/"
+				+ weatherCode + ".html";
 		queryFromServer(address, "weatherCode");
 	}
-	
+
 	/**
 	 * 根据传入的地址和类型去向服务器查询天气代号或者天气信息。
 	 */
@@ -150,7 +166,8 @@ public class WeatherActivity extends Activity implements OnClickListener{
 					}
 				} else if ("weatherCode".equals(type)) {
 					// 处理服务器返回的天气信息
-					Utility.handleWeatherResponse(WeatherActivity.this, response);
+					Utility.handleWeatherResponse(WeatherActivity.this,
+							response);
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -159,7 +176,7 @@ public class WeatherActivity extends Activity implements OnClickListener{
 					});
 				}
 			}
-			
+
 			@Override
 			public void onError(Exception e) {
 				runOnUiThread(new Runnable() {
@@ -171,26 +188,28 @@ public class WeatherActivity extends Activity implements OnClickListener{
 			}
 		});
 	}
-	
+
 	/**
 	 * 从SharedPreferences文件中读取存储的天气信息，并显示到界面上。
 	 */
 	private void showWeather() {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		cityNameText.setText( prefs.getString("city_name", ""));
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		cityNameText.setText(prefs.getString("city_name", ""));
 		cityNameText.setTextColor(Color.rgb(255, 0, 255));
-		temp1Text.setText(prefs.getString("temp1", ""));
-		temp1Text.setTextColor(Color.rgb(139, 0, 139));
-		temp2Text.setTextColor(Color.rgb(139, 0, 139));
-		temp2Text.setText(prefs.getString("temp2", ""));
 		weatherDespText.setText(prefs.getString("weather_desp", ""));
-		weatherDespText.setTextColor(Color.rgb(135, 100, 0));
+		weatherDespText.setTextColor(Color.rgb(155, 48, 255));
 		publishText.setText("今天" + prefs.getString("publish_time", "") + "发布");
 		currentDateText.setText(prefs.getString("current_date", ""));
 		weatherInfoLayout.setVisibility(View.VISIBLE);
 		cityNameText.setVisibility(View.VISIBLE);
 		Intent intent = new Intent(this, AutoUpdateService.class);
 		startService(intent);
+	}
+
+	@Override
+	public void onBackPressed() {
+		finish();
 	}
 
 }

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">全国当日天气查询</string>
+    <string name="app_name">天气小助手</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="more_report">更多天气预报</string>
 
 </resources>

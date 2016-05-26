@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/weather_info_layout_page2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="#27A5F9" >
+
+        <TextView
+            android:id="@+id/page2_weather_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="70dp"
+            android:textColor="#FFFF00"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/page2_templow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/page2_weather_type"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="35dp"
+            android:textColor="#00008B"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/page2_temphigh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/page2_templow"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="35dp"
+            android:textColor="#00008B"
+            android:textSize="20sp" />
+
+        <com.coolweather.app.model.MyTextView
+            android:id="@+id/page2_ganmao"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/page2_temphigh"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="35dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:singleLine="true"
+            android:textColor="#00008B"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/page2_wind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/page2_ganmao"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="35dp"
+            android:gravity="center"
+            android:textColor="#00008B"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+</RelativeLayout>
